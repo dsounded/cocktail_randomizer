@@ -1,0 +1,19 @@
+@import users.Users.UserPresenter
+
+@(userForm: Form[UserPresenter])(implicit messages: Messages)
+
+@if(userForm.hasGlobalErrors) {
+    <ul>
+    @for(error <- userForm.globalErrors) {
+        <li>@Messages(error.messages, error.args)</li>
+    }
+    </ul>
+}
+
+@helper.form(action = routes.Application.saveUser()) {
+  @helper.inputText(userForm("name"))
+
+  <input type="submit" class="btn" value="Submit :)">
+}
+
+<p><a href='@routes.Application.index'>Go on main</a></p>

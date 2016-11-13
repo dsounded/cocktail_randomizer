@@ -1,0 +1,19 @@
+@import users.Users.User
+
+@(users: Seq[User])
+
+<h1>Welcome to Cocktail Randomizer for Grand America !!!</h1>
+
+<p>If you want to register another User, please follow the <a href='@routes.Application.addUser'>link</a></p>
+
+<hr>
+
+<p>Drunken boyz:</p>
+
+@for(user <- users) {
+  <p>@user.name</p>
+}
+
+<hr>
+
+<h2>Create new <a href='@routes.Application.buildCocktails'>cocktail pool</a></h2>

@@ -1,0 +1,42 @@
+@import cocktails.Cocktails.CocktailPresenter
+@import users.Users.User
+
+@(form: Form[CocktailPresenter], users: Seq[User])(implicit messages: Messages)
+
+<h3>Choose cocktails options:</h3>
+
+<p>Pick number of alcoholics:</p>
+<input type="number" min="1" max="22" class="alcoholicsNumber">
+<button class="alcoholics">Get alcoholics!</button>
+
+@helper.form(action = routes.Application.saveCocktails()) {
+    <p>Pick number of drinks:</p>
+
+    @helper.inputText(form("numberOfDrinks"), '_label -> "")
+
+    <p>Select users who will drink:</p>
+
+    <div class="usersContainer"></div>
+
+    <input type="submit" class="btn" value="Submit :)">
+}
+
+<p><a href='@routes.Application.index'>Go on main</a></p>
+
+<script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+
+<script>
+  $(".alcoholics").click(function(){
+     $(".usersContainer").empty();
+     var number = $(".alcoholicsNumber").val();
+     var select = "<select name=alcoholicsIds[]>";
+     @for(user <- users) {
+       select += "<option value=@user.id>@user.name</option>";
+     }
+
+     select += "</select><br>"
+     for(i = 1; i <= number; i++) {
+       $(".usersContainer").append(select)
+     }
+  });
+</script>

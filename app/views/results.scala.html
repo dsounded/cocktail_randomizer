@@ -1,0 +1,12 @@
+@import operators.DrinkResult
+@import users.Users.User
+
+@(results: Seq[DrinkResult], users: Seq[User])(implicit messages: Messages)
+
+<h1>Here is a random result:</h1>
+
+@for(result <- results) {
+  <li>@users.filter(user => user.id == result.id).head.name should drink @result.results.map(_.toString).mkString(", ")
+}
+
+<p><a href='@routes.Application.index'>Go on main</a></p>
