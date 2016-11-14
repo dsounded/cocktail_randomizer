@@ -1,0 +1,1 @@
+web: target/universal/stage/bin/cocktail_randomizer -Dhttp.port=${PORT} -Dplay.crypto.secret=${APPLICATION_SECRET} -Dconfig.file=conf/application-production.conf
