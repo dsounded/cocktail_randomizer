@@ -27,7 +27,7 @@ object Users {
     def *            = (id,name, createdAt) <> (User.tupled, User.unapply _)
   }
 
-  case class UserWithCocktails(id: Long = 0, name: String, createdAt: DateTime = DateTime.now, cocktailNumber: Int)
+  case class UserWithCocktails(id: Long = 0, name: String, createdAt: DateTime = DateTime.now, cocktailNumber: Option[Int])
 
   object UsersDAO extends HasDatabaseConfig[JdbcProfile] {
     protected implicit val app = play.api.Play.current
@@ -46,12 +46,13 @@ object Users {
 
     def allWithCocktails(implicit ec: ExecutionContext): Future[Seq[UserWithCocktails]] = {
       val join = for {
-        user <- users
-        cocktail <- cocktails if user.id === cocktail.alcoholicId
+        (user, cocktail) <- users joinLeft cocktails on(_.id === _.alcoholicId)
       } yield (user, cocktail)
 
       val records = join.groupBy { case (user, cocktail) => (user.id, user.name, user.createdAt) }.map {
-        case ((id, name, createdAt), union) => (id, name, createdAt, union.length)
+        case ((id, name, createdAt), union) => (id, name, createdAt, union.map(_._2).map(_.map(_.cocktailNumber).getOrElse(0)).map { result =>
+          Case If result > 0 Then 1 Else 0
+        }.sum)
       }
 
       db.run(records.sortBy(record => record._4.desc).result).map(_.map(UserWithCocktails.tupled))
