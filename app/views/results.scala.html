@@ -6,7 +6,7 @@
 <h1>Here is a random result:</h1>
 
 @for(result <- results) {
-  <li>@users.filter(user => user.id == result.id).head.name should drink @result.results.map(_.toString).mkString(", ")
+  <li>@users.filter(user => user.id == result.id).head.name should drink <b>@result.results.map(_.toString).mkString(", ")</b>
 }
 
 <p><a href='@routes.Application.index'>Go on main</a></p>

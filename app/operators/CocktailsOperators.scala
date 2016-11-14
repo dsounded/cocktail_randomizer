@@ -8,8 +8,6 @@ import cocktails.Cocktails.{ Cocktail, CocktailDAO }
 case class DrinkResult(id: Long, results: Seq[Int])
 
 class CocktailManager(numberOfDrinks: Int, alcoholicsIds: Seq[Int]) extends Actor {
-  import CocktailManager.Cocktails
-
   val StartPoint = 1
   private val countForEach = ((numberOfDrinks: Float) / alcoholicsIds.distinct.length).round
   private val batches = Random.shuffle(Range(StartPoint, numberOfDrinks + 1).toList).grouped(countForEach).toList
@@ -20,27 +18,21 @@ class CocktailManager(numberOfDrinks: Int, alcoholicsIds: Seq[Int]) extends Acto
   }
 
   def receive = {
-    case "drinks" => sender ! result
+    case "drinks" =>
+      sender ! result
+
+      context stop self
     case "pour" =>
-      alcoholicsIds.distinct.zipWithIndex.foreach {
-        case(id, index) =>
-          context.actorOf(Props[PersonCocktailBartender]) ! Cocktails(id, batches(index))
-      }
+      result.foreach(drinks => context.actorOf(Props[PersonCocktailBartender]) ! drinks)
   }
 }
 
 class PersonCocktailBartender extends Actor {
-  import CocktailManager.Cocktails
-
   def receive = {
-    case Cocktails(id, cocktailNumbers) =>
+    case DrinkResult(id, cocktailNumbers) =>
       val records = cocktailNumbers.map { number => Cocktail(id, number) }
       CocktailDAO.insert(records)
 
       context stop self
   }
-}
-
-object CocktailManager {
-  case class Cocktails(alcoholicId: Long, cocktailIds: Seq[Int])
 }

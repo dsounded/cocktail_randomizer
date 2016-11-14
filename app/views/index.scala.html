@@ -1,6 +1,6 @@
-@import users.Users.User
+@import users.Users.UserWithCocktails
 
-@(users: Seq[User])
+@(users: Seq[UserWithCocktails])
 
 <h1>Welcome to Cocktail Randomizer for Grand America !!!</h1>
 
@@ -9,11 +9,11 @@
 <hr>
 
 <p>Drunken boyz:</p>
-
+<table><tr><th>Name</th><th>Register Date</th><th>Drunk</th></tr>
 @for(user <- users) {
-  <p>@user.name</p>
+  <tr><td>@user.name</td><td>@user.createdAt.toString("dd.MM.yyyy")</td><td>@user.cocktailNumber</td></tr>
 }
-
+</table>
 <hr>
 
 <h2>Create new <a href='@routes.Application.buildCocktails'>cocktail pool</a></h2>

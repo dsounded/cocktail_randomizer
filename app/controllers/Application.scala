@@ -2,25 +2,24 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-
 import play.api.data._
+
 import play.api.data.Forms._
-
-import users.Users.{ UsersDAO, UserPresenter }
-import cocktails.Cocktails.CocktailPresenter
-
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import akka.actor.{ ActorSystem, Props }
+import users.Users.{ UserPresenter, UsersDAO }
+
+import cocktails.Cocktails.CocktailPresenter
+
+import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 
 import com.google.inject.Inject
 
 import scala.concurrent.duration._
-
 import operators.{ CocktailManager, DrinkResult }
 
 class Application @Inject() (operator: ActorSystem) extends Controller {
@@ -37,7 +36,7 @@ class Application @Inject() (operator: ActorSystem) extends Controller {
   )
 
   def index = Action.async {
-    val users = UsersDAO.all
+    val users = UsersDAO.allWithCocktails
 
     users.map(theUsers => Ok(views.html.index(theUsers)))
   }
